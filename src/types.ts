@@ -1,4 +1,4 @@
-export interface TransactionWithBalances {
+export interface Transaction {
   Id: number;
   Type: string;
   Amount: number;

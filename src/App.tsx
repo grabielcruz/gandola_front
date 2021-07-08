@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import TransactionsWithBalances from "./components/transactions/TransactionsWithBalances";
+import Transactions from "./features/transactions/Transactions";
 
 const Container = styled.div`
   width: 80%;
@@ -8,7 +8,7 @@ const Container = styled.div`
 
 const App = () => (
   <Container>
-    <TransactionsWithBalances />
+    <Transactions />
   </Container>
 );
 

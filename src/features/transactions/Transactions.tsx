@@ -1,30 +1,26 @@
-import axios from "axios";
-import React, { useState, useEffect } from "react";
-import { TransactionWithBalances } from "../../types";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../app/store";
 import { DateFormatter, FormatCurrency, GetDescriptiveTipe } from "../../utils";
-import TransactionsForm from "../TransactionsForm";
+import TransactionsForm from "./TransactionsForm";
+import { fetchTransactions } from "./transactionsSlice";
 
 const TransactionsWithBalances = () => {
-  const [transactionsWithBalances, setTransactionsWithBalances] = useState<
-    TransactionWithBalances[]
-  >([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const dispatch = useDispatch();
 
-  const getTransactionsWithBalances = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`/transactions`);
-      setTransactionsWithBalances(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-    setLoading(false);
-  };
+  const transactions = useSelector(
+    (state: RootState) => state.transactionsReducer.transactions
+  );
+  const status = useSelector(
+    (state: RootState) => state.transactionsReducer.status
+  );
+  const error = useSelector((state: RootState) => state.transactionsReducer.error)
+
   useEffect(() => {
-    getTransactionsWithBalances();
-  }, []);
+    if (status === "idle") dispatch(fetchTransactions());
+  }, [status, dispatch]);
 
-  if (loading) {
+  if (status === "loading") {
     return (
       <div>
         <p>cargando...</p>
@@ -32,7 +28,7 @@ const TransactionsWithBalances = () => {
     );
   }
 
-  if (transactionsWithBalances.length === 0) {
+  if (transactions.length === 0) {
     return (
       <div>
         <p>No hay transacciones generadas</p>
@@ -41,6 +37,7 @@ const TransactionsWithBalances = () => {
   }
   return (
     <div>
+      {error && error}
       <TransactionsForm />
       <table>
         <thead>
@@ -55,13 +52,12 @@ const TransactionsWithBalances = () => {
           </tr>
         </thead>
         <tbody>
-          {transactionsWithBalances.map((transaction, i) => (
+          {transactions.map((transaction, i) => (
             <tr key={i}>
               <td>{transaction.Id}</td>
               <td>{DateFormatter(transaction.Executed)}</td>
               <td>{GetDescriptiveTipe(transaction.Type)}</td>
-              {/* <td>{FormatCurrency(transaction.Amount)}</td> */}
-              <td>{transaction.Amount}</td>
+              <td>{FormatCurrency(transaction.Amount)}</td>
               <td>{transaction.Description}</td>
               <td>{FormatCurrency(transaction.Balance)}</td>
               <td>{transaction.Actor}</td>

@@ -1,9 +1,11 @@
-import axios from "axios";
 import { ChangeEvent, useState } from "react";
-import { TransactionWithBalances } from "../types";
+import { Transaction } from "../../types";
+import { useDispatch } from 'react-redux'
+import { createTransaction } from './transactionsSlice'
 
 const TransactionsForm = () => {
-  const [newTransaction, setNewTransaction] = useState<TransactionWithBalances>(
+  const dispatch = useDispatch()
+  const [newTransaction, setNewTransaction] = useState<Transaction>(
     {
       Id: 0,
       Type: "input",
@@ -16,16 +18,21 @@ const TransactionsForm = () => {
     }
   );
 
-  const createTransaction = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log(newTransaction);
-    try {
-      const response = await axios.post("/transactions", newTransaction);
-      console.log(response.data);
-    } catch (error) {
-      console.log(error.response.data);
-    }
-  };
+  // const createTransaction = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   console.log(newTransaction);
+  //   try {
+  //     const response = await axios.post("/transactions", newTransaction);
+  //     console.log(response.data);
+  //   } catch (error) {
+  //     console.log(error.response.data);
+  //   }
+  // };
+
+  const submit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    dispatch(createTransaction(newTransaction))
+  }
 
   const handleChange = (
     e: ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputElement>
@@ -33,7 +40,7 @@ const TransactionsForm = () => {
     if (e.target.name === "Amount") {
       setNewTransaction({
         ...newTransaction,
-        Amount: Number(e.target.value) || 0,
+        Amount: Number(e.target.value),
       });
       return;
     }
@@ -44,7 +51,7 @@ const TransactionsForm = () => {
   };
 
   return (
-    <form onSubmit={(e) => createTransaction(e)}>
+    <form onSubmit={(e) => submit(e)}>
       <label htmlFor="type">
         Tipo
         <select
