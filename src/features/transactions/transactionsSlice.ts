@@ -2,10 +2,10 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Transaction } from "../../types";
 
-const initialState: InitialState = {
-  transactions: [],
-  status: "idle",
-  error: null,
+const initialState: InitialTransactionsState = {
+  Transactions: [],
+  Status: "idle",
+  Error: null,
 };
 
 export const fetchTransactions = createAsyncThunk(
@@ -80,75 +80,76 @@ const transactionsSlice = createSlice({
   reducers: {},
   extraReducers: {
     [fetchTransactions.pending.toString()]: (state, action) => {
-      state.status = "loading";
+      state.Status = "loading";
     },
     [fetchTransactions.fulfilled.toString()]: (state, action) => {
-      state.status = "succeeded";
-      state.transactions = state.transactions.concat(action.payload);
-      state.error = null;
+      state.Status = "succeeded";
+      // state.Transactions = state.Transactions.concat(action.payload);
+      state.Transactions = action.payload;
+      state.Error = null;
     },
     [fetchTransactions.rejected.toString()]: (state, action) => {
-      state.status = "failed";
-      state.error = action.payload;
+      state.Status = "failed";
+      state.Error = action.payload;
     },
 
     [createTransaction.pending.toString()]: (state, action) => {
-      state.status = "loading";
+      state.Status = "loading";
     },
     [createTransaction.fulfilled.toString()]: (state, action) => {
-      state.status = "succeeded";
-      state.transactions.push(action.payload);
-      state.error = null;
+      state.Status = "succeeded";
+      state.Transactions.push(action.payload);
+      state.Error = null;
     },
     [createTransaction.rejected.toString()]: (state, action) => {
-      state.status = "failed";
-      state.error = action.payload;
+      state.Status = "failed";
+      state.Error = action.payload;
     },
 
     [patchTransaction.pending.toString()]: (state, action) => {
-      state.status = "loading";
+      state.Status = "loading";
     },
     [patchTransaction.fulfilled.toString()]: (state, action) => {
-      state.status = "succeeded";
-      for (let i = 0; i < state.transactions.length; i++) {
-        if (state.transactions[i].Id === action.payload.Id) {
-          state.transactions[i] = action.payload;
-          state.error = null;
+      state.Status = "succeeded";
+      for (let i = 0; i < state.Transactions.length; i++) {
+        if (state.Transactions[i].Id === action.payload.Id) {
+          state.Transactions[i] = action.payload;
+          state.Error = null;
           return;
         }
       }
     },
     [patchTransaction.rejected.toString()]: (state, action) => {
-      state.status = "failed";
-      state.error = action.payload;
+      state.Status = "failed";
+      state.Error = action.payload;
     },
 
     [deleteLastTransaction.pending.toString()]: (state, action) => {
-      state.status = "loading";
+      state.Status = "loading";
     },
     [deleteLastTransaction.fulfilled.toString()]: (state, action) => {
-      state.status = "succeeded";
-      for (let i = state.transactions.length - 1; i > 0; i--) {
-        if (state.transactions[i].Id === action.payload.Id) {
-          state.transactions = state.transactions
+      state.Status = "succeeded";
+      for (let i = state.Transactions.length - 1; i > 0; i--) {
+        if (state.Transactions[i].Id === action.payload.Id) {
+          state.Transactions = state.Transactions
             .slice(0, i)
-            .concat(state.transactions.slice(i + 1));
-          state.error = null;
+            .concat(state.Transactions.slice(i + 1));
+          state.Error = null;
           return;
         }
       }
     },
     [deleteLastTransaction.rejected.toString()]: (state, action) => {
-      state.status = "failed";
-      state.error = action.payload;
+      state.Status = "failed";
+      state.Error = action.payload;
     },
   },
 });
 
-interface InitialState {
-  transactions: Transaction[];
-  status: "idle" | "succeeded" | "failed" | "loading";
-  error: string | null;
+interface InitialTransactionsState {
+  Transactions: Transaction[];
+  Status: "idle" | "succeeded" | "failed" | "loading";
+  Error: string | null;
 }
 
 export default transactionsSlice.reducer;

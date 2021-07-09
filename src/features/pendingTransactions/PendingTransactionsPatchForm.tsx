@@ -1,43 +1,45 @@
-import { ChangeEvent, useState } from "react";
-import { Transaction } from "../../types";
+import { ChangeEvent } from "react";
+import { PendingTransaction } from "../../types";
 import { useDispatch } from "react-redux";
-import { createTransaction } from "./transactionsSlice";
+import { patchPendingTransactions } from "./pendingTransactionsSlice";
 
-const TransactionsForm = () => {
+const PendingTransactionsPatchForm: React.FC<Props> = ({
+  editingPendingTransaction,
+  setEditingPendingTransaction,
+}) => {
   const dispatch = useDispatch();
-  const zeroTransaction: Transaction = {
-    Id: 0,
-    Type: "input",
-    Amount: 0,
-    Description: "",
-    Balance: 0,
-    Actor: 1,
-    Executed: "",
-    CreatedAt: "",
-  };
-  const [newTransaction, setNewTransaction] =
-    useState<Transaction>(zeroTransaction);
 
   const handleChange = (
     e: ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputElement>
   ) => {
     if (e.target.name === "Amount") {
-      setNewTransaction({
-        ...newTransaction,
+      setEditingPendingTransaction({
+        ...editingPendingTransaction,
         Amount: Number(e.target.value),
       });
       return;
     }
-    setNewTransaction({
-      ...newTransaction,
+    setEditingPendingTransaction({
+      ...editingPendingTransaction,
       [e.target.name]: e.target.value,
+    });
+  };
+
+  const clearForm = () => {
+    setEditingPendingTransaction({
+      Id: 0,
+      Type: "input",
+      Amount: 0,
+      Description: "",
+      Actor: 1,
+      CreatedAt: "",
     });
   };
 
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(createTransaction(newTransaction));
-    setNewTransaction(zeroTransaction);
+    dispatch(patchPendingTransactions(editingPendingTransaction));
+    clearForm();
   };
 
   return (
@@ -48,7 +50,7 @@ const TransactionsForm = () => {
           name="Type"
           placeholder="Tipo"
           onChange={(e) => handleChange(e)}
-          value={newTransaction.Type}
+          value={editingPendingTransaction.Type}
         >
           <option value="output">Pago</option>
           <option value="input">Cobro</option>
@@ -61,7 +63,7 @@ const TransactionsForm = () => {
           type="text"
           name="Description"
           onChange={(e) => handleChange(e)}
-          value={newTransaction.Description}
+          value={editingPendingTransaction.Description}
         />
       </label>
 
@@ -71,7 +73,7 @@ const TransactionsForm = () => {
           type="number"
           name="Amount"
           onChange={(e) => handleChange(e)}
-          value={Number(newTransaction.Amount).toString()}
+          value={Number(editingPendingTransaction.Amount).toString()}
         />
       </label>
 
@@ -80,14 +82,24 @@ const TransactionsForm = () => {
         <select
           name="Actor"
           onChange={(e) => handleChange(e)}
-          value={newTransaction.Actor}
+          value={editingPendingTransaction.Actor}
         >
           <option value="1">Externo</option>
         </select>
       </label>
-      <button type="submit">Crear transacción</button>
+      <button type="submit">Guardar Cambios</button>
+      <button type="button" onClick={clearForm}>
+        Cerrar
+      </button>
     </form>
   );
 };
 
-export default TransactionsForm;
+export default PendingTransactionsPatchForm;
+
+interface Props {
+  editingPendingTransaction: PendingTransaction;
+  setEditingPendingTransaction: React.Dispatch<
+    React.SetStateAction<PendingTransaction>
+  >;
+}

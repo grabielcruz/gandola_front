@@ -12,34 +12,31 @@ import {
 const TransactionsWithBalances = () => {
   const dispatch = useDispatch();
   const [editingTransaction, setEditingTransaction] = useState<{
-    editing: boolean;
-    id: number;
-    description: string;
+    Id: number;
+    Description: string;
   }>({
-    editing: false,
-    id: 0,
-    description: "",
+    Id: 0,
+    Description: "",
   });
 
   const transactions = useSelector(
-    (state: RootState) => state.transactionsReducer.transactions
+    (state: RootState) => state.Transactions.Transactions
   );
   const status = useSelector(
-    (state: RootState) => state.transactionsReducer.status
+    (state: RootState) => state.Transactions.Status
   );
   const error = useSelector(
-    (state: RootState) => state.transactionsReducer.error
+    (state: RootState) => state.Transactions.Error
   );
 
   useEffect(() => {
     if (status === "idle") dispatch(fetchTransactions());
   }, [status, dispatch]);
 
-  const editTransaction = (id: number) => {
+  const editTransaction = (Id: number) => {
     setEditingTransaction({
       ...editingTransaction,
-      editing: true,
-      id,
+      Id,
     });
   };
 
@@ -47,7 +44,7 @@ const TransactionsWithBalances = () => {
     e.preventDefault();
     setEditingTransaction({
       ...editingTransaction,
-      description: e.target.value,
+      Description: e.target.value,
     });
   };
 
@@ -55,14 +52,13 @@ const TransactionsWithBalances = () => {
     e.preventDefault();
     dispatch(
       patchTransaction({
-        Id: editingTransaction.id,
-        Description: editingTransaction.description,
+        Id: editingTransaction.Id,
+        Description: editingTransaction.Description,
       })
     );
     setEditingTransaction({
-      id: 0,
-      editing: false,
-      description: "",
+      Id: 0,
+      Description: "",
     });
   };
 
@@ -81,13 +77,13 @@ const TransactionsWithBalances = () => {
       <button type="button" onClick={() => dispatch(deleteLastTransaction())}>
         Borrar última transacción
       </button>
-      {editingTransaction.editing && (
+      {editingTransaction.Id !== 0 && (
         <form onSubmit={(e) => submitDescription(e)}>
           <label htmlFor="Description">
             <input
               type="text"
               onChange={(e) => handleDescriptionChange(e)}
-              value={editingTransaction.description}
+              value={editingTransaction.Description}
               name="Description"
             />
           </label>

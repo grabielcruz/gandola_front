@@ -1,43 +1,41 @@
 import { ChangeEvent, useState } from "react";
-import { Transaction } from "../../types";
+import { PendingTransaction } from "../../types";
 import { useDispatch } from "react-redux";
-import { createTransaction } from "./transactionsSlice";
+import { createPendingTransaction } from "./pendingTransactionsSlice";
 
-const TransactionsForm = () => {
+const PendingTransactionsForm = () => {
   const dispatch = useDispatch();
-  const zeroTransaction: Transaction = {
+  const zeroTransaction: PendingTransaction = {
     Id: 0,
     Type: "input",
     Amount: 0,
     Description: "",
-    Balance: 0,
     Actor: 1,
-    Executed: "",
     CreatedAt: "",
   };
-  const [newTransaction, setNewTransaction] =
-    useState<Transaction>(zeroTransaction);
+  const [newPendingTransaction, setNewPendingTransaction] =
+    useState<PendingTransaction>(zeroTransaction);
 
   const handleChange = (
     e: ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputElement>
   ) => {
     if (e.target.name === "Amount") {
-      setNewTransaction({
-        ...newTransaction,
+      setNewPendingTransaction({
+        ...newPendingTransaction,
         Amount: Number(e.target.value),
       });
       return;
     }
-    setNewTransaction({
-      ...newTransaction,
+    setNewPendingTransaction({
+      ...newPendingTransaction,
       [e.target.name]: e.target.value,
     });
   };
 
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(createTransaction(newTransaction));
-    setNewTransaction(zeroTransaction);
+    dispatch(createPendingTransaction(newPendingTransaction));
+    setNewPendingTransaction(zeroTransaction)
   };
 
   return (
@@ -48,7 +46,7 @@ const TransactionsForm = () => {
           name="Type"
           placeholder="Tipo"
           onChange={(e) => handleChange(e)}
-          value={newTransaction.Type}
+          value={newPendingTransaction.Type}
         >
           <option value="output">Pago</option>
           <option value="input">Cobro</option>
@@ -61,7 +59,7 @@ const TransactionsForm = () => {
           type="text"
           name="Description"
           onChange={(e) => handleChange(e)}
-          value={newTransaction.Description}
+          value={newPendingTransaction.Description}
         />
       </label>
 
@@ -71,7 +69,7 @@ const TransactionsForm = () => {
           type="number"
           name="Amount"
           onChange={(e) => handleChange(e)}
-          value={Number(newTransaction.Amount).toString()}
+          value={Number(newPendingTransaction.Amount).toString()}
         />
       </label>
 
@@ -80,7 +78,7 @@ const TransactionsForm = () => {
         <select
           name="Actor"
           onChange={(e) => handleChange(e)}
-          value={newTransaction.Actor}
+          value={newPendingTransaction.Actor}
         >
           <option value="1">Externo</option>
         </select>
@@ -90,4 +88,4 @@ const TransactionsForm = () => {
   );
 };
 
-export default TransactionsForm;
+export default PendingTransactionsForm;
