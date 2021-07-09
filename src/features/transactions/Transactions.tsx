@@ -1,12 +1,25 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { DateFormatter, FormatCurrency, GetDescriptiveTipe } from "../../utils";
 import TransactionsForm from "./TransactionsForm";
-import { fetchTransactions } from "./transactionsSlice";
+import {
+  deleteLastTransaction,
+  fetchTransactions,
+  patchTransaction,
+} from "./transactionsSlice";
 
 const TransactionsWithBalances = () => {
   const dispatch = useDispatch();
+  const [editingTransaction, setEditingTransaction] = useState<{
+    editing: boolean;
+    id: number;
+    description: string;
+  }>({
+    editing: false,
+    id: 0,
+    description: "",
+  });
 
   const transactions = useSelector(
     (state: RootState) => state.transactionsReducer.transactions
@@ -14,19 +27,44 @@ const TransactionsWithBalances = () => {
   const status = useSelector(
     (state: RootState) => state.transactionsReducer.status
   );
-  const error = useSelector((state: RootState) => state.transactionsReducer.error)
+  const error = useSelector(
+    (state: RootState) => state.transactionsReducer.error
+  );
 
   useEffect(() => {
     if (status === "idle") dispatch(fetchTransactions());
   }, [status, dispatch]);
 
-  if (status === "loading") {
-    return (
-      <div>
-        <p>cargando...</p>
-      </div>
+  const editTransaction = (id: number) => {
+    setEditingTransaction({
+      ...editingTransaction,
+      editing: true,
+      id,
+    });
+  };
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setEditingTransaction({
+      ...editingTransaction,
+      description: e.target.value,
+    });
+  };
+
+  const submitDescription = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    dispatch(
+      patchTransaction({
+        Id: editingTransaction.id,
+        Description: editingTransaction.description,
+      })
     );
-  }
+    setEditingTransaction({
+      id: 0,
+      editing: false,
+      description: "",
+    });
+  };
 
   if (transactions.length === 0) {
     return (
@@ -37,8 +75,25 @@ const TransactionsWithBalances = () => {
   }
   return (
     <div>
+      {status === "loading" && <p>Cargando...</p>}
       {error && error}
       <TransactionsForm />
+      <button type="button" onClick={() => dispatch(deleteLastTransaction())}>
+        Borrar última transacción
+      </button>
+      {editingTransaction.editing && (
+        <form onSubmit={(e) => submitDescription(e)}>
+          <label htmlFor="Description">
+            <input
+              type="text"
+              onChange={(e) => handleDescriptionChange(e)}
+              value={editingTransaction.description}
+              name="Description"
+            />
+          </label>
+          <button type="submit">Guardar Descripción</button>
+        </form>
+      )}
       <table>
         <thead>
           <tr>
@@ -61,6 +116,11 @@ const TransactionsWithBalances = () => {
               <td>{transaction.Description}</td>
               <td>{FormatCurrency(transaction.Balance)}</td>
               <td>{transaction.Actor}</td>
+              <td>
+                <button onClick={() => editTransaction(transaction.Id)}>
+                  Editar
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

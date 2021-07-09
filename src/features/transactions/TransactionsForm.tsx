@@ -60,8 +60,8 @@ const TransactionsForm = () => {
           onChange={(e) => handleChange(e)}
           value={newTransaction.Type}
         >
-          <option value="output">Salida</option>
-          <option value="input">Entrada</option>
+          <option value="output">Pago</option>
+          <option value="input">Cobro</option>
         </select>
       </label>
 

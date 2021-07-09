@@ -1,9 +1,9 @@
 export function GetDescriptiveTipe(type: string): string {
   if (type === "input") {
-    return "Entrada"
+    return "Cobro"
   }
   if (type === "output") {
-    return "Salida"
+    return "Pago"
   }
   return "indeterminado"
 }

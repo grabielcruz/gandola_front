@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, AsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Transaction } from "../../types";
 
@@ -23,7 +23,7 @@ export const fetchTransactions = createAsyncThunk(
   }
 );
 
-export const createTransaction = createAsyncThunk(
+export const createTransaction = createAsyncThunk<any, Transaction, {}>(
   "/transactions/createTransaction",
   async (newTransaction, { rejectWithValue }) => {
     try {
@@ -36,7 +36,43 @@ export const createTransaction = createAsyncThunk(
       return rejectWithValue(error.response.data);
     }
   }
-) as AsyncThunk<any, Transaction, {}>;
+);
+
+export const patchTransaction = createAsyncThunk<
+  any,
+  { Id: number; Description: string },
+  {}
+>(
+  "/transactions/patchTransaction",
+  async ({ Id, Description }, { rejectWithValue }) => {
+    try {
+      const response = await axios.patch(`/transactions/${Id}`, {
+        Description,
+      });
+      return response.data;
+    } catch (error) {
+      if (!error.response) {
+        throw error;
+      }
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const deleteLastTransaction = createAsyncThunk(
+  "/transactions/deleteLastTransaction",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(`/transactions`);
+      return response.data;
+    } catch (error) {
+      if (!error.response) {
+        throw error;
+      }
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 
 const transactionsSlice = createSlice({
   name: "transactions",
@@ -55,6 +91,7 @@ const transactionsSlice = createSlice({
       state.status = "failed";
       state.error = action.payload;
     },
+
     [createTransaction.pending.toString()]: (state, action) => {
       state.status = "loading";
     },
@@ -67,15 +104,50 @@ const transactionsSlice = createSlice({
       state.status = "failed";
       state.error = action.payload;
     },
+
+    [patchTransaction.pending.toString()]: (state, action) => {
+      state.status = "loading";
+    },
+    [patchTransaction.fulfilled.toString()]: (state, action) => {
+      state.status = "succeeded";
+      for (let i = 0; i < state.transactions.length; i++) {
+        if (state.transactions[i].Id === action.payload.Id) {
+          state.transactions[i] = action.payload;
+          state.error = null;
+          return;
+        }
+      }
+    },
+    [patchTransaction.rejected.toString()]: (state, action) => {
+      state.status = "failed";
+      state.error = action.payload;
+    },
+
+    [deleteLastTransaction.pending.toString()]: (state, action) => {
+      state.status = "loading";
+    },
+    [deleteLastTransaction.fulfilled.toString()]: (state, action) => {
+      state.status = "succeeded";
+      for (let i = state.transactions.length - 1; i > 0; i--) {
+        if (state.transactions[i].Id === action.payload.Id) {
+          state.transactions = state.transactions
+            .slice(0, i)
+            .concat(state.transactions.slice(i + 1));
+          state.error = null;
+          return;
+        }
+      }
+    },
+    [deleteLastTransaction.rejected.toString()]: (state, action) => {
+      state.status = "failed";
+      state.error = action.payload;
+    },
   },
 });
 
-// export const { transactionWithBalanceAdded } =
-//   transactionsWithBalanceSlice.actions;
-
 interface InitialState {
   transactions: Transaction[];
-  status: "idle" | "loading" | "succeeded" | "failed";
+  status: "idle" | "succeeded" | "failed" | "loading";
   error: string | null;
 }
 
