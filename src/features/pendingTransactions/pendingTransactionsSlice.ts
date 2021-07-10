@@ -67,8 +67,8 @@ export const patchPendingTransactions = createAsyncThunk<
   }
 );
 
-export const deletePendingTransactions = createAsyncThunk<any, number, {}>(
-  "/pending_transactions/deletePendingTransactions",
+export const deletePendingTransaction = createAsyncThunk<any, number, {}>(
+  "/pending_transactions/deletePendingTransaction",
   async (pendingTransactionId, { rejectWithValue }) => {
     try {
       const response = await axios.delete(
@@ -87,7 +87,28 @@ export const deletePendingTransactions = createAsyncThunk<any, number, {}>(
 const pendingTransactionsSlice = createSlice({
   name: "pendingTransactions",
   initialState,
-  reducers: {},
+  reducers: {
+    setPendingTransactionsStatus: (state, action) => {
+      state.Status = action.payload;
+    },
+    addPendingTransaction: (state, action) => {
+      state.PendingTransactions.push(action.payload);
+    },
+    removePendingTransaction: (state, action) => {
+      for (let i = 0; i < state.PendingTransactions.length; i++) {
+        if (state.PendingTransactions[i].Id === action.payload) {
+          state.PendingTransactions = state.PendingTransactions.slice(
+            0,
+            i
+          ).concat(state.PendingTransactions.slice(i + 1));
+          return
+        }
+      }
+    },
+    setPendingTransactionsError: (state, action) => {
+      state.Error = action.payload;
+    },
+  },
   extraReducers: {
     [fetchPendingTransactions.pending.toString()]: (state, action) => {
       state.Status = "loading";
@@ -133,10 +154,10 @@ const pendingTransactionsSlice = createSlice({
       state.Error = action.payload;
     },
 
-    [deletePendingTransactions.pending.toString()]: (state, action) => {
+    [deletePendingTransaction.pending.toString()]: (state, action) => {
       state.Status = "loading";
     },
-    [deletePendingTransactions.fulfilled.toString()]: (state, action) => {
+    [deletePendingTransaction.fulfilled.toString()]: (state, action) => {
       state.Status = "succeeded";
       for (let i = 0; i < state.PendingTransactions.length; i++) {
         if (state.PendingTransactions[i].Id === action.payload.Id) {
@@ -149,7 +170,7 @@ const pendingTransactionsSlice = createSlice({
         }
       }
     },
-    [deletePendingTransactions.rejected.toString()]: (state, action) => {
+    [deletePendingTransaction.rejected.toString()]: (state, action) => {
       state.Status = "failed";
       state.Error = action.payload;
     },
@@ -161,5 +182,12 @@ interface InitialPendingTransactionsState {
   Status: "idle" | "succeeded" | "failed" | "loading";
   Error: string | null;
 }
+
+export const {
+  setPendingTransactionsStatus,
+  setPendingTransactionsError,
+  addPendingTransaction,
+  removePendingTransaction,
+} = pendingTransactionsSlice.actions;
 
 export default pendingTransactionsSlice.reducer;

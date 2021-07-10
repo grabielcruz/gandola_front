@@ -1,12 +1,17 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { DateFormatter, FormatCurrency, GetDescriptiveTipe } from "../../utils";
+import { addPendingTransaction } from "../pendingTransactions/pendingTransactionsSlice";
 import TransactionsForm from "./TransactionsForm";
 import {
   deleteLastTransaction,
   fetchTransactions,
   patchTransaction,
+  removeLastTransaction,
+  setTransactionsError,
+  setTransactionsStatus,
 } from "./transactionsSlice";
 
 const TransactionsWithBalances = () => {
@@ -62,6 +67,22 @@ const TransactionsWithBalances = () => {
     });
   };
 
+  const unexecuteLastTransaction = () => {
+    const unexecute = async () => {
+      try {
+        dispatch(setTransactionsStatus("loading"))
+        const response = await axios.put('/transactions')
+        dispatch(addPendingTransaction(response.data))
+        dispatch(removeLastTransaction(""))
+        dispatch(setTransactionsStatus("succeeded"))
+      } catch (error) {
+        dispatch(setTransactionsStatus("failed"));
+        dispatch(setTransactionsError(error.response.data))
+      }
+    }
+    unexecute()
+  }
+
   if (transactions.length === 0) {
     return (
       <div>
@@ -76,6 +97,9 @@ const TransactionsWithBalances = () => {
       <TransactionsForm />
       <button type="button" onClick={() => dispatch(deleteLastTransaction())}>
         Borrar última transacción
+      </button>
+      <button type="button" onClick={() => unexecuteLastTransaction()}>
+        Pasar última transacción a pendientes
       </button>
       {editingTransaction.Id !== 0 && (
         <form onSubmit={(e) => submitDescription(e)}>

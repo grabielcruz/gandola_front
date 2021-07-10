@@ -77,14 +77,26 @@ export const deleteLastTransaction = createAsyncThunk(
 const transactionsSlice = createSlice({
   name: "transactions",
   initialState,
-  reducers: {},
+  reducers: {
+    setTransactionsStatus: (state, action) => {
+      state.Status = action.payload;
+    },
+    addTransaction: (state, action) => {
+      state.Transactions.push(action.payload);
+    },
+    removeLastTransaction: (state, action) => {
+      state.Transactions.pop();
+    },
+    setTransactionsError: (state, action) => {
+      state.Error = action.payload;
+    },
+  },
   extraReducers: {
     [fetchTransactions.pending.toString()]: (state, action) => {
       state.Status = "loading";
     },
     [fetchTransactions.fulfilled.toString()]: (state, action) => {
       state.Status = "succeeded";
-      // state.Transactions = state.Transactions.concat(action.payload);
       state.Transactions = action.payload;
       state.Error = null;
     },
@@ -131,9 +143,9 @@ const transactionsSlice = createSlice({
       state.Status = "succeeded";
       for (let i = state.Transactions.length - 1; i > 0; i--) {
         if (state.Transactions[i].Id === action.payload.Id) {
-          state.Transactions = state.Transactions
-            .slice(0, i)
-            .concat(state.Transactions.slice(i + 1));
+          state.Transactions = state.Transactions.slice(0, i).concat(
+            state.Transactions.slice(i + 1)
+          );
           state.Error = null;
           return;
         }
@@ -151,5 +163,12 @@ interface InitialTransactionsState {
   Status: "idle" | "succeeded" | "failed" | "loading";
   Error: string | null;
 }
+
+export const {
+  setTransactionsStatus,
+  addTransaction,
+  removeLastTransaction,
+  setTransactionsError,
+} = transactionsSlice.actions;
 
 export default transactionsSlice.reducer;
