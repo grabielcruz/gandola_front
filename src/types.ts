@@ -4,7 +4,10 @@ export interface Transaction {
   Amount: number;
   Description: string;
   Balance: number;
-  Actor: number;
+  Actor: {
+    Id: number;
+    Name: string;
+  }
   Executed: string;
   CreatedAt: string;
 }
@@ -14,7 +17,10 @@ export interface PendingTransaction {
   Type: "input" | "output";
   Amount: number;
   Description: string;
-  Actor: number;
+  Actor: {
+    Id: number;
+    Name: string;
+  }
   CreatedAt: string;
 }
 

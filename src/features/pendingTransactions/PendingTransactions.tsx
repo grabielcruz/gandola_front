@@ -25,7 +25,10 @@ const PendingTransactions = () => {
       Type: "input",
       Amount: 0,
       Description: "",
-      Actor: 1,
+      Actor: {
+        Id: 1,
+        Name: ""
+      },
       CreatedAt: "",
     });
 
@@ -89,7 +92,7 @@ const PendingTransactions = () => {
               <td>{GetDescriptiveTipe(transaction.Type)}</td>
               <td>{FormatCurrency(transaction.Amount)}</td>
               <td>{transaction.Description}</td>
-              <td>{transaction.Actor}</td>
+              <td>{transaction.Actor.Name}</td>
               <td>
                 <button
                   type="button"

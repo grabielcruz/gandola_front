@@ -38,20 +38,20 @@ export const createActor = createAsyncThunk<any, Actor, {}>(
   }
 );
 
-export const patchActor = createAsyncThunk<any, Actor, {}>(
-  "/actors/patchActor",
-  async (newActor, { rejectWithValue }) => {
-    try {
-      const response = await axios.patch(`/actors/${newActor.Id}`, newActor);
-      return response.data;
-    } catch (error) {
-      if (!error.response) {
-        throw error;
-      }
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
+// export const patchActor = createAsyncThunk<any, Actor, {}>(
+//   "/actors/patchActor",
+//   async (newActor, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.patch(`/actors/${newActor.Id}`, newActor);
+//       return response.data;
+//     } catch (error) {
+//       if (!error.response) {
+//         throw error;
+//       }
+//       return rejectWithValue(error.response.data);
+//     }
+//   }
+// );
 
 export const deleteActor = createAsyncThunk<any, number, {}>(
   "/actors/deleteActor",
@@ -71,7 +71,23 @@ export const deleteActor = createAsyncThunk<any, number, {}>(
 const actorsSlice = createSlice({
   name: "actors",
   initialState,
-  reducers: {},
+  reducers: {
+    setActorsStatus: (state, action) => {
+      state.Status = action.payload;
+    },
+    updateActor: (state, action) => {
+      for (let i = 0; i < state.Actors.length; i++) {
+        if (state.Actors[i].Id === action.payload.Id) {
+          state.Actors[i] = action.payload
+          state.Error = null;
+          return
+        }
+      }
+    },
+    setActorsError: (state, action) => {
+      state.Error = action.payload
+    }
+  },
   extraReducers: {
     [fetchActors.pending.toString()]: (state, action) => {
       state.Status = "loading";
@@ -99,23 +115,23 @@ const actorsSlice = createSlice({
       state.Error = action.payload;
     },
 
-    [patchActor.pending.toString()]: (state, action) => {
-      state.Status = "loading";
-    },
-    [patchActor.fulfilled.toString()]: (state, action) => {
-      state.Status = "succeeded";
-      for (let i = 0; i < state.Actors.length; i++) {
-        if (state.Actors[i].Id === action.payload.Id) {
-          state.Actors[i] = action.payload;
-          state.Error = null;
-          return;
-        }
-      }
-    },
-    [patchActor.rejected.toString()]: (state, action) => {
-      state.Status = "failed";
-      state.Error = action.payload;
-    },
+    // [patchActor.pending.toString()]: (state, action) => {
+    //   state.Status = "loading";
+    // },
+    // [patchActor.fulfilled.toString()]: (state, action) => {
+    //   state.Status = "succeeded";
+    //   for (let i = 0; i < state.Actors.length; i++) {
+    //     if (state.Actors[i].Id === action.payload.Id) {
+    //       state.Actors[i] = action.payload;
+    //       state.Error = null;
+    //       return;
+    //     }
+    //   }
+    // },
+    // [patchActor.rejected.toString()]: (state, action) => {
+    //   state.Status = "failed";
+    //   state.Error = action.payload;
+    // },
 
     [deleteActor.pending.toString()]: (state, action) => {
       state.Status = "loading";
@@ -144,5 +160,7 @@ interface InitialActorsState {
   Status: "idle" | "succeeded" | "failed" | "loading";
   Error: string | null;
 }
+
+export const { setActorsStatus, updateActor, setActorsError } = actorsSlice.actions;
 
 export default actorsSlice.reducer;

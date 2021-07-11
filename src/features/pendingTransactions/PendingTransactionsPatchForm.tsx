@@ -28,6 +28,13 @@ const PendingTransactionsPatchForm: React.FC<Props> = ({
       });
       return;
     }
+    if (e.target.name === "Actor") {
+      setEditingPendingTransaction({
+        ...editingPendingTransaction,
+        Actor: {Id: Number(e.target.value), Name: ""},
+      });
+      return;
+    }
     setEditingPendingTransaction({
       ...editingPendingTransaction,
       [e.target.name]: e.target.value,
@@ -40,7 +47,10 @@ const PendingTransactionsPatchForm: React.FC<Props> = ({
       Type: "input",
       Amount: 0,
       Description: "",
-      Actor: 1,
+      Actor: {
+        Id: 1,
+        Name: ""
+      },
       CreatedAt: "",
     });
   };
@@ -91,7 +101,7 @@ const PendingTransactionsPatchForm: React.FC<Props> = ({
         <select
           name="Actor"
           onChange={(e) => handleChange(e)}
-          value={editingPendingTransaction.Actor}
+          value={editingPendingTransaction.Actor.Id}
         >
           {actors.map((actor, i) => (
             <option key={i} value={actor.Id}>

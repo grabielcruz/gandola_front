@@ -1,6 +1,9 @@
+import axios from "axios";
 import { useDispatch } from "react-redux";
 import { Actor } from "../../types";
-import { patchActor } from "./actorsSlice";
+import { updatePendingTransactionsActors } from "../pendingTransactions/pendingTransactionsSlice";
+import { updateTransactionsActors } from "../transactions/transactionsSlice";
+import {setActorsError, setActorsStatus, updateActor } from "./actorsSlice";
 
 const ActorsPatchForm: React.FC<Props> = ({
   editingActor,
@@ -8,6 +11,7 @@ const ActorsPatchForm: React.FC<Props> = ({
   zeroActor,
 }) => {
   const dispatch = useDispatch();
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name;
@@ -25,7 +29,21 @@ const ActorsPatchForm: React.FC<Props> = ({
 
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(patchActor(editingActor));
+    // dispatch(patchActor(editingActor));
+    const patchActor = async () => {
+      try {
+        dispatch(setActorsStatus("loading"))
+        const response = await axios.patch(`/actors/${editingActor.Id}`, editingActor);
+        dispatch(updateActor(response.data))
+        dispatch(updateTransactionsActors(response.data))
+        dispatch(updatePendingTransactionsActors(response.data))
+        dispatch(setActorsStatus("succeeded"))
+      } catch (error) { 
+        dispatch(setActorsStatus("failed"))
+        dispatch(setActorsError(error.response.data))
+      }
+    }
+    patchActor()
     clearForm();
   };
 

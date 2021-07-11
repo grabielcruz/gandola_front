@@ -90,6 +90,13 @@ const transactionsSlice = createSlice({
     setTransactionsError: (state, action) => {
       state.Error = action.payload;
     },
+    updateTransactionsActors: (state, action) => {
+      for (let i = 0; i < state.Transactions.length; i++) {
+        if (state.Transactions[i].Actor.Id === action.payload.Id) {
+          state.Transactions[i].Actor.Name = action.payload.Name
+        }
+      }
+    }
   },
   extraReducers: {
     [fetchTransactions.pending.toString()]: (state, action) => {
@@ -169,6 +176,7 @@ export const {
   addTransaction,
   removeLastTransaction,
   setTransactionsError,
+  updateTransactionsActors
 } = transactionsSlice.actions;
 
 export default transactionsSlice.reducer;

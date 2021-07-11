@@ -13,7 +13,10 @@ const TransactionsForm = () => {
     Amount: 0,
     Description: "",
     Balance: 0,
-    Actor: 1,
+    Actor: {
+      Id: 1,
+      Name: ""
+    },
     Executed: "",
     CreatedAt: "",
   };
@@ -31,10 +34,17 @@ const TransactionsForm = () => {
   const handleChange = (
     e: ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputElement>
   ) => {
-    if (e.target.name === "Amount" || e.target.name === "Actor") {
+    if (e.target.name === "Amount") {
       setNewTransaction({
         ...newTransaction,
-        [e.target.name]: Number(e.target.value),
+        Amount: Number(e.target.value),
+      });
+      return;
+    }
+    if (e.target.name === "Actor") {
+      setNewTransaction({
+        ...newTransaction,
+        Actor: {Id: Number(e.target.value), Name: ""},
       });
       return;
     }
@@ -90,7 +100,7 @@ const TransactionsForm = () => {
         <select
           name="Actor"
           onChange={(e) => handleChange(e)}
-          value={newTransaction.Actor}
+          value={newTransaction.Actor.Id}
         >
           {actors.map((actor, i) => (
             <option key={i} value={actor.Id}>

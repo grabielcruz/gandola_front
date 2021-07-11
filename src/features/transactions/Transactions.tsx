@@ -142,7 +142,7 @@ const TransactionsWithBalances = () => {
               <td>{FormatCurrency(transaction.Amount)}</td>
               <td>{transaction.Description}</td>
               <td>{FormatCurrency(transaction.Balance)}</td>
-              <td>{transaction.Actor}</td>
+              <td>{transaction.Actor.Name}</td>
               <td>
                 <button
                   onClick={() =>

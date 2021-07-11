@@ -108,6 +108,13 @@ const pendingTransactionsSlice = createSlice({
     setPendingTransactionsError: (state, action) => {
       state.Error = action.payload;
     },
+    updatePendingTransactionsActors: (state, action) => {
+      for (let i = 0; i < state.PendingTransactions.length; i++) {
+        if (state.PendingTransactions[i].Actor.Id === action.payload.Id) {
+          state.PendingTransactions[i].Actor.Name = action.payload.Name
+        }
+      }
+    }
   },
   extraReducers: {
     [fetchPendingTransactions.pending.toString()]: (state, action) => {
@@ -188,6 +195,7 @@ export const {
   setPendingTransactionsError,
   addPendingTransaction,
   removePendingTransaction,
+  updatePendingTransactionsActors
 } = pendingTransactionsSlice.actions;
 
 export default pendingTransactionsSlice.reducer;

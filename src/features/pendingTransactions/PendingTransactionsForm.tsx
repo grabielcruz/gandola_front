@@ -12,7 +12,10 @@ const PendingTransactionsForm = () => {
     Type: "input",
     Amount: 0,
     Description: "",
-    Actor: 1,
+    Actor: {
+      Id: 1,
+      Name: ""
+    },
     CreatedAt: "",
   };
   const [newPendingTransaction, setNewPendingTransaction] =
@@ -28,10 +31,17 @@ const PendingTransactionsForm = () => {
   const handleChange = (
     e: ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputElement>
   ) => {
-    if (e.target.name === "Amount" || e.target.name === "Actor") {
+    if (e.target.name === "Amount") {
       setNewPendingTransaction({
         ...newPendingTransaction,
         [e.target.name]: Number(e.target.value),
+      });
+      return;
+    }
+    if (e.target.name === "Actor") {
+      setNewPendingTransaction({
+        ...newPendingTransaction,
+        Actor: {Id: Number(e.target.value), Name: ""},
       });
       return;
     }
@@ -87,7 +97,7 @@ const PendingTransactionsForm = () => {
         <select
           name="Actor"
           onChange={(e) => handleChange(e)}
-          value={newPendingTransaction.Actor}
+          value={newPendingTransaction.Actor.Id}
         >
           {actors.map((actor, i) => (
             <option key={i} value={actor.Id}>
