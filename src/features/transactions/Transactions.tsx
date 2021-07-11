@@ -27,21 +27,17 @@ const TransactionsWithBalances = () => {
   const transactions = useSelector(
     (state: RootState) => state.Transactions.Transactions
   );
-  const status = useSelector(
-    (state: RootState) => state.Transactions.Status
-  );
-  const error = useSelector(
-    (state: RootState) => state.Transactions.Error
-  );
+  const status = useSelector((state: RootState) => state.Transactions.Status);
+  const error = useSelector((state: RootState) => state.Transactions.Error);
 
   useEffect(() => {
     if (status === "idle") dispatch(fetchTransactions());
   }, [status, dispatch]);
 
-  const editTransaction = (Id: number) => {
+  const editTransaction = (Id: number, Description: string) => {
     setEditingTransaction({
-      ...editingTransaction,
       Id,
+      Description,
     });
   };
 
@@ -70,18 +66,18 @@ const TransactionsWithBalances = () => {
   const unexecuteLastTransaction = () => {
     const unexecute = async () => {
       try {
-        dispatch(setTransactionsStatus("loading"))
-        const response = await axios.put('/transactions')
-        dispatch(addPendingTransaction(response.data))
-        dispatch(removeLastTransaction(""))
-        dispatch(setTransactionsStatus("succeeded"))
+        dispatch(setTransactionsStatus("loading"));
+        const response = await axios.put("/transactions");
+        dispatch(addPendingTransaction(response.data));
+        dispatch(removeLastTransaction(""));
+        dispatch(setTransactionsStatus("succeeded"));
       } catch (error) {
         dispatch(setTransactionsStatus("failed"));
-        dispatch(setTransactionsError(error.response.data))
+        dispatch(setTransactionsError(error.response.data));
       }
-    }
-    unexecute()
-  }
+    };
+    unexecute();
+  };
 
   if (transactions.length === 0) {
     return (
@@ -112,6 +108,17 @@ const TransactionsWithBalances = () => {
             />
           </label>
           <button type="submit">Guardar Descripción</button>
+          <button
+            type="button"
+            onClick={() =>
+              setEditingTransaction({
+                Id: 0,
+                Description: "",
+              })
+            }
+          >
+            Cerrar
+          </button>
         </form>
       )}
       <table>
@@ -137,7 +144,11 @@ const TransactionsWithBalances = () => {
               <td>{FormatCurrency(transaction.Balance)}</td>
               <td>{transaction.Actor}</td>
               <td>
-                <button onClick={() => editTransaction(transaction.Id)}>
+                <button
+                  onClick={() =>
+                    editTransaction(transaction.Id, transaction.Description)
+                  }
+                >
                   Editar
                 </button>
               </td>

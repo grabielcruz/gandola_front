@@ -2,11 +2,13 @@ import { configureStore } from "@reduxjs/toolkit";
 
 import transactionsReducer from "../features/transactions/transactionsSlice";
 import pendingTransactionReducer from "../features/pendingTransactions/pendingTransactionsSlice";
+import actorsReducer from "../features/actors/actorsSlice";
 
 export const store = configureStore({
   reducer: {
     Transactions: transactionsReducer,
     PendingTransactions: pendingTransactionReducer,
+    Actors: actorsReducer,
   },
 });
 

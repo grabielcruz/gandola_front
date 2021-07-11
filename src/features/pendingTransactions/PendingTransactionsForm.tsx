@@ -1,7 +1,9 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { PendingTransaction } from "../../types";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createPendingTransaction } from "./pendingTransactionsSlice";
+import { RootState } from "../../app/store";
+import { fetchActors } from "../actors/actorsSlice";
 
 const PendingTransactionsForm = () => {
   const dispatch = useDispatch();
@@ -16,13 +18,20 @@ const PendingTransactionsForm = () => {
   const [newPendingTransaction, setNewPendingTransaction] =
     useState<PendingTransaction>(zeroTransaction);
 
+  const actors = useSelector((state: RootState) => state.Actors.Actors);
+  const actorsStatus = useSelector((state: RootState) => state.Actors.Status);
+
+  useEffect(() => {
+    if (actorsStatus === "idle") dispatch(fetchActors());
+  }, [actorsStatus, dispatch]);
+
   const handleChange = (
     e: ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputElement>
   ) => {
-    if (e.target.name === "Amount") {
+    if (e.target.name === "Amount" || e.target.name === "Actor") {
       setNewPendingTransaction({
         ...newPendingTransaction,
-        Amount: Number(e.target.value),
+        [e.target.name]: Number(e.target.value),
       });
       return;
     }
@@ -35,7 +44,7 @@ const PendingTransactionsForm = () => {
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(createPendingTransaction(newPendingTransaction));
-    setNewPendingTransaction(zeroTransaction)
+    setNewPendingTransaction(zeroTransaction);
   };
 
   return (
@@ -80,7 +89,11 @@ const PendingTransactionsForm = () => {
           onChange={(e) => handleChange(e)}
           value={newPendingTransaction.Actor}
         >
-          <option value="1">Externo</option>
+          {actors.map((actor, i) => (
+            <option key={i} value={actor.Id}>
+              {actor.Name}
+            </option>
+          ))}
         </select>
       </label>
       <button type="submit">Crear transacción</button>

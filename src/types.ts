@@ -17,3 +17,11 @@ export interface PendingTransaction {
   Actor: number;
   CreatedAt: string;
 }
+
+export interface Actor {
+  Id: number;
+  Name: string;
+  Description: string;
+  IsCompany: boolean;
+  CreatedAt: string;
+}

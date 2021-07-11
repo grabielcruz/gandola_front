@@ -1,7 +1,9 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect } from "react";
 import { PendingTransaction } from "../../types";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { patchPendingTransactions } from "./pendingTransactionsSlice";
+import { RootState } from "../../app/store";
+import { fetchActors } from "../actors/actorsSlice";
 
 const PendingTransactionsPatchForm: React.FC<Props> = ({
   editingPendingTransaction,
@@ -9,13 +11,20 @@ const PendingTransactionsPatchForm: React.FC<Props> = ({
 }) => {
   const dispatch = useDispatch();
 
+  const actors = useSelector((state: RootState) => state.Actors.Actors);
+  const actorsStatus = useSelector((state: RootState) => state.Actors.Status);
+
+  useEffect(() => {
+    if (actorsStatus === "idle") dispatch(fetchActors());
+  }, [actorsStatus, dispatch]);
+
   const handleChange = (
     e: ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputElement>
   ) => {
-    if (e.target.name === "Amount") {
+    if (e.target.name === "Amount" || e.target.name === "Actor") {
       setEditingPendingTransaction({
         ...editingPendingTransaction,
-        Amount: Number(e.target.value),
+        [e.target.name]: Number(e.target.value),
       });
       return;
     }
@@ -84,7 +93,11 @@ const PendingTransactionsPatchForm: React.FC<Props> = ({
           onChange={(e) => handleChange(e)}
           value={editingPendingTransaction.Actor}
         >
-          <option value="1">Externo</option>
+          {actors.map((actor, i) => (
+            <option key={i} value={actor.Id}>
+              {actor.Name}
+            </option>
+          ))}
         </select>
       </label>
       <button type="submit">Guardar Cambios</button>
