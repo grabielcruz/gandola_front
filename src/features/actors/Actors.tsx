@@ -46,7 +46,7 @@ const Actors = () => {
           </tr>
         </thead>
         <tbody>
-          {actors.map((actor, i) => (
+          {actors.length > 0 && actors.map((actor, i) => (
             <tr key={i}>
               <td>{actor.Id}</td>
               <td>{actor.Name}</td>
@@ -60,6 +60,7 @@ const Actors = () => {
               </td>
             </tr>
           ))}
+          {actors.length === 0 && <p>No se encontraron actores registrados</p>}
         </tbody>
       </table>
     </div>

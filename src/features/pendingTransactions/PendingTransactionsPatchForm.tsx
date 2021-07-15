@@ -45,6 +45,7 @@ const PendingTransactionsPatchForm: React.FC<Props> = ({
     setEditingPendingTransaction({
       Id: 0,
       Type: "input",
+      Currency: "USD",
       Amount: 0,
       Description: "",
       Actor: {
@@ -73,6 +74,19 @@ const PendingTransactionsPatchForm: React.FC<Props> = ({
         >
           <option value="output">Pago</option>
           <option value="input">Cobro</option>
+        </select>
+      </label>
+
+      <label htmlFor="type">
+        Moneda
+        <select
+          name="Currency"
+          placeholder="Moneda"
+          onChange={(e) => handleChange(e)}
+          value={editingPendingTransaction.Currency}
+        >
+          <option value="USD">USD</option>
+          <option value="VES">VES</option>
         </select>
       </label>
 

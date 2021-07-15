@@ -82,10 +82,10 @@ const transactionsSlice = createSlice({
       state.Status = action.payload;
     },
     addTransaction: (state, action) => {
-      state.Transactions.push(action.payload);
+      state.Transactions.unshift(action.payload);
     },
     removeLastTransaction: (state, action) => {
-      state.Transactions.pop();
+      state.Transactions.shift();
     },
     setTransactionsError: (state, action) => {
       state.Error = action.payload;
@@ -117,7 +117,7 @@ const transactionsSlice = createSlice({
     },
     [createTransaction.fulfilled.toString()]: (state, action) => {
       state.Status = "succeeded";
-      state.Transactions.push(action.payload);
+      state.Transactions.unshift(action.payload);
       state.Error = null;
     },
     [createTransaction.rejected.toString()]: (state, action) => {
@@ -148,15 +148,14 @@ const transactionsSlice = createSlice({
     },
     [deleteLastTransaction.fulfilled.toString()]: (state, action) => {
       state.Status = "succeeded";
-      for (let i = state.Transactions.length - 1; i > 0; i--) {
-        if (state.Transactions[i].Id === action.payload.Id) {
-          state.Transactions = state.Transactions.slice(0, i).concat(
-            state.Transactions.slice(i + 1)
-          );
-          state.Error = null;
-          return;
-        }
+      if (action.payload.Id === state.Transactions[0].Id) {
+        state.Transactions.shift()
+      } else {
+        state.Error = "algo no funcionó como se esperaba";
       }
+      state.Error = null;
+      return;
+       
     },
     [deleteLastTransaction.rejected.toString()]: (state, action) => {
       state.Status = "failed";

@@ -1,9 +1,11 @@
 export interface Transaction {
   Id: number;
   Type: "input" | "output";
+  Currency: "USD" | "VES";
   Amount: number;
   Description: string;
-  Balance: number;
+  USDBalance: number;
+  VESBalance: number;
   Actor: {
     Id: number;
     Name: string;
@@ -15,6 +17,7 @@ export interface Transaction {
 export interface PendingTransaction {
   Id: number;
   Type: "input" | "output";
+  Currency: "USD" | "VES";
   Amount: number;
   Description: string;
   Actor: {

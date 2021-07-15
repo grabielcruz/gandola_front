@@ -10,6 +10,7 @@ const PendingTransactionsForm = () => {
   const zeroTransaction: PendingTransaction = {
     Id: 0,
     Type: "input",
+    Currency: "USD",
     Amount: 0,
     Description: "",
     Actor: {
@@ -69,6 +70,19 @@ const PendingTransactionsForm = () => {
         >
           <option value="output">Pago</option>
           <option value="input">Cobro</option>
+        </select>
+      </label>
+
+      <label htmlFor="type">
+        Moneda
+        <select
+          name="Currency"
+          placeholder="Moneda"
+          onChange={(e) => handleChange(e)}
+          value={newPendingTransaction.Currency}
+        >
+          <option value="USD">USD</option>
+          <option value="VES">VES</option>
         </select>
       </label>
 

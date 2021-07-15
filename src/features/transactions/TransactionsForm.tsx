@@ -10,9 +10,11 @@ const TransactionsForm = () => {
   const zeroTransaction: Transaction = {
     Id: 0,
     Type: "input",
+    Currency: "USD",
     Amount: 0,
     Description: "",
-    Balance: 0,
+    USDBalance: 0,
+    VESBalance: 0,
     Actor: {
       Id: 1,
       Name: ""
@@ -72,6 +74,19 @@ const TransactionsForm = () => {
         >
           <option value="output">Pago</option>
           <option value="input">Cobro</option>
+        </select>
+      </label>
+
+      <label htmlFor="Type">
+        Moneda
+        <select
+          name="Currency"
+          placeholder="Moneda"
+          onChange={(e) => handleChange(e)}
+          value={newTransaction.Currency}
+        >
+          <option value="USD">USD</option>
+          <option value="VES">VES</option>
         </select>
       </label>
 

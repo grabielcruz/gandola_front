@@ -2,8 +2,16 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../app/store";
-import { DateFormatter, FormatCurrency, GetDescriptiveTipe } from "../../utils";
-import { addPendingTransaction } from "../pendingTransactions/pendingTransactionsSlice";
+import {
+  DateFormatter,
+  FormatUSDCurrency,
+  FormatVESCurrency,
+  GetDescriptiveTipe,
+} from "../../utils";
+import {
+  addPendingTransaction,
+  setPendingTransactionsError,
+} from "../pendingTransactions/pendingTransactionsSlice";
 import TransactionsForm from "./TransactionsForm";
 import {
   deleteLastTransaction,
@@ -71,6 +79,8 @@ const TransactionsWithBalances = () => {
         dispatch(addPendingTransaction(response.data));
         dispatch(removeLastTransaction(""));
         dispatch(setTransactionsStatus("succeeded"));
+        dispatch(setPendingTransactionsError(null));
+        dispatch(setTransactionsError(null))
       } catch (error) {
         dispatch(setTransactionsStatus("failed"));
         dispatch(setTransactionsError(error.response.data));
@@ -79,13 +89,6 @@ const TransactionsWithBalances = () => {
     unexecute();
   };
 
-  if (transactions.length === 0) {
-    return (
-      <div>
-        <p>No hay transacciones generadas</p>
-      </div>
-    );
-  }
   return (
     <div>
       {status === "loading" && <p>Cargando...</p>}
@@ -127,35 +130,45 @@ const TransactionsWithBalances = () => {
             <th>#</th>
             <th>Fecha</th>
             <th>Tipo</th>
+            <th>Moneda</th>
             <th>Monto</th>
             <th>Descripción</th>
-            <th>Balance</th>
+            <th>Balance USD</th>
+            <th>Balance VES</th>
             <th>Actor</th>
           </tr>
         </thead>
         <tbody>
-          {transactions.map((transaction, i) => (
-            <tr key={i}>
-              <td>{transaction.Id}</td>
-              <td>{DateFormatter(transaction.Executed)}</td>
-              <td>{GetDescriptiveTipe(transaction.Type)}</td>
-              <td>{FormatCurrency(transaction.Amount)}</td>
-              <td>{transaction.Description}</td>
-              <td>{FormatCurrency(transaction.Balance)}</td>
-              <td>{transaction.Actor.Name}</td>
-              <td>
-                <button
-                  onClick={() =>
-                    editTransaction(transaction.Id, transaction.Description)
-                  }
-                >
-                  Editar
-                </button>
-              </td>
-            </tr>
-          ))}
+          {transactions.length > 0 &&
+            transactions.map((transaction, i) => (
+              <tr key={i}>
+                <td>{transaction.Id}</td>
+                <td>{DateFormatter(transaction.Executed)}</td>
+                <td>{GetDescriptiveTipe(transaction.Type)}</td>
+                <td>{transaction.Currency}</td>
+                <td>
+                  {transaction.Currency === "USD"
+                    ? FormatUSDCurrency(transaction.Amount)
+                    : FormatVESCurrency(transaction.Amount)}
+                </td>
+                <td>{transaction.Description}</td>
+                <td>{FormatUSDCurrency(transaction.USDBalance)}</td>
+                <td>{FormatVESCurrency(transaction.VESBalance)}</td>
+                <td>{transaction.Actor.Name}</td>
+                <td>
+                  <button
+                    onClick={() =>
+                      editTransaction(transaction.Id, transaction.Description)
+                    }
+                  >
+                    Editar
+                  </button>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
+      {transactions.length === 0 && <p>No hay transacciones registradas</p>}
     </div>
   );
 };
