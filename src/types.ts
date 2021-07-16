@@ -9,7 +9,7 @@ export interface Transaction {
   Actor: {
     Id: number;
     Name: string;
-  }
+  };
   Executed: string;
   CreatedAt: string;
 }
@@ -23,7 +23,7 @@ export interface PendingTransaction {
   Actor: {
     Id: number;
     Name: string;
-  }
+  };
   CreatedAt: string;
 }
 
@@ -33,4 +33,13 @@ export interface Actor {
   Description: string;
   IsCompany: boolean;
   CreatedAt: string;
+}
+
+export interface Note {
+  Id: number;
+  Description: string;
+  Urgency: "low" | "medium" | "high" | "critical";
+  Attended: boolean;
+  CreatedAt: string;
+  AttendedAt: string;
 }

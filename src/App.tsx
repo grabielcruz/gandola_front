@@ -4,6 +4,7 @@ import PendingTransactions from "./features/pendingTransactions/PendingTransacti
 import Actors from "./features/actors/Actors";
 import Home from "./features/Home";
 import { Switch, BrowserRouter as Router, Route, Link } from "react-router-dom";
+import Notes from "./features/notes/Notes";
 
 const Container = styled.div`
   width: 80%;
@@ -25,6 +26,9 @@ const App = () => (
       <li>
         <Link to="/actors">Actores</Link>
       </li>
+      <li>
+        <Link to="/notes">Notas</Link>
+      </li>
     </ul>
     <Container>
       <Switch>
@@ -36,6 +40,9 @@ const App = () => (
         </Route>
         <Route path="/actors">
           <Actors />
+        </Route>
+        <Route path="/notes">
+          <Notes />
         </Route>
         <Route path="/">
           <Home />

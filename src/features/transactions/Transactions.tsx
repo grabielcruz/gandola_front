@@ -80,7 +80,7 @@ const TransactionsWithBalances = () => {
         dispatch(removeLastTransaction(""));
         dispatch(setTransactionsStatus("succeeded"));
         dispatch(setPendingTransactionsError(null));
-        dispatch(setTransactionsError(null))
+        dispatch(setTransactionsError(null));
       } catch (error) {
         dispatch(setTransactionsStatus("failed"));
         dispatch(setTransactionsError(error.response.data));
@@ -124,23 +124,23 @@ const TransactionsWithBalances = () => {
           </button>
         </form>
       )}
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Fecha</th>
-            <th>Tipo</th>
-            <th>Moneda</th>
-            <th>Monto</th>
-            <th>Descripción</th>
-            <th>Balance USD</th>
-            <th>Balance VES</th>
-            <th>Actor</th>
-          </tr>
-        </thead>
-        <tbody>
-          {transactions.length > 0 &&
-            transactions.map((transaction, i) => (
+      {transactions.length > 0 && (
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Fecha</th>
+              <th>Tipo</th>
+              <th>Moneda</th>
+              <th>Monto</th>
+              <th>Descripción</th>
+              <th>Balance USD</th>
+              <th>Balance VES</th>
+              <th>Actor</th>
+            </tr>
+          </thead>
+          <tbody>
+            {transactions.map((transaction, i) => (
               <tr key={i}>
                 <td>{transaction.Id}</td>
                 <td>{DateFormatter(transaction.Executed)}</td>
@@ -166,8 +166,9 @@ const TransactionsWithBalances = () => {
                 </td>
               </tr>
             ))}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      )}
       {transactions.length === 0 && <p>No hay transacciones registradas</p>}
     </div>
   );
