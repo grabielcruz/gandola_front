@@ -137,6 +137,7 @@ const transactionsSlice = createSlice({
           return;
         }
       }
+      state.Error = "It did not match";
     },
     [patchTransaction.rejected.toString()]: (state, action) => {
       state.Status = "failed";

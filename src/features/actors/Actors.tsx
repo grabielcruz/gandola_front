@@ -46,23 +46,29 @@ const Actors = () => {
           </tr>
         </thead>
         <tbody>
-          {actors.length > 0 && actors.map((actor, i) => (
-            <tr key={i}>
-              <td>{actor.Id}</td>
-              <td>{actor.Name}</td>
-              <td>{actor.Description}</td>
-              <td>{actor.IsCompany ? "Sí" : "No"}</td>
-              <td>
-                <button type="button" onClick={() => setEditingActor(actor)}>
-                  Editar
-                </button>
-                <button type="button" onClick={() => dispatch(deleteActor(actor.Id))}>Borrar</button>
-              </td>
-            </tr>
-          ))}
-          {actors.length === 0 && <p>No se encontraron actores registrados</p>}
+          {actors.length > 0 &&
+            actors.map((actor, i) => (
+              <tr key={i}>
+                <td>{actor.Id}</td>
+                <td>{actor.Name}</td>
+                <td>{actor.Description}</td>
+                <td>{actor.IsCompany ? "Sí" : "No"}</td>
+                <td>
+                  <button type="button" onClick={() => setEditingActor(actor)}>
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => dispatch(deleteActor(actor.Id))}
+                  >
+                    Borrar
+                  </button>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
+      {actors.length === 0 && <p>No se encontraron actores registrados</p>}
     </div>
   );
 };

@@ -1,11 +1,25 @@
+import { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../app/store";
-import { fetchNotes } from "./notesSlice";
+import { Note } from "../../types";
+import NotesForm from "./NotesForm";
+import NotesPatchForm from "./NotesPatchForm";
+import { attendNote, deleteNote, fetchNotes, unattendNote } from "./notesSlice";
 
 const Notes = () => {
-  const status = useSelector((state: RootState) => state.Notes.Status);
+  const zeroNote: Note = {
+    Id: 0,
+    Description: "",
+    Urgency: "low",
+    Attended: false,
+    CreatedAt: "",
+    AttendedAt: "",
+  };
+  const [editingNote, setEditingNote] = useState<Note>(zeroNote);
   const notes = useSelector((state: RootState) => state.Notes.Notes);
+  const status = useSelector((state: RootState) => state.Notes.Status);
+  const error = useSelector((state: RootState) => state.Notes.Error);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -14,32 +28,35 @@ const Notes = () => {
   return (
     <div>
       {status === "loading" && <p>Cargando...</p>}
-      {notes.length > 0 && (
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Descripión</th>
-              <th>Urgencia</th>
-              <th>Atendida</th>
-              <th>Created el</th>
-              <th>Atendido el</th>
-            </tr>
-          </thead>
-          <tbody>
-            {notes.map((note, i) => (
-              <tr key={i}>
-                <td>{note.Id}</td>
-                <td>{note.Description}</td>
-                <td>{note.Urgency}</td>
-                <td>{note.Attended}</td>
-                <td>{note.CreatedAt}</td>
-                <td>{note.AttendedAt}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {error && error}
+      <NotesForm zeroNote={zeroNote} />
+      {editingNote.Id !== 0 && (
+        <NotesPatchForm
+          editingNote={editingNote}
+          setEditingNote={setEditingNote}
+          zeroNote={zeroNote}
+        />
       )}
+      {notes.length > 0 &&
+        notes.map((note, i) => (
+          <div key={i}>
+            <span>{note.Id}</span>
+            <pre>{note.Description}</pre>
+            <span>{note.Urgency}</span>
+            <br />
+            <span>{note.Attended ? "Sí" : "No"}</span>
+            {/* <p>{note.CreatedAt}</p> */}
+            {/* <p>{note.AttendedAt}</p> */}
+            <button type="button" onClick={() => setEditingNote(note)}>
+              Editar
+            </button>
+            <button type="button" onClick={() => dispatch(deleteNote(note.Id))}>
+              Borrar
+            </button>
+            {!note.Attended && <button type="button" onClick={() => dispatch(attendNote(note.Id))}>Marcar como completada</button>}
+            {note.Attended && <button type="button" onClick={() => dispatch(unattendNote(note.Id))}>Marcar como sin completar</button>}
+          </div>
+        ))}
     </div>
   );
 };
