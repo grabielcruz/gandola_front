@@ -8,10 +8,9 @@ const ActorsForm: React.FC<Props> = ({ zeroActor }) => {
 
   const [newActor, setNewActor] = useState<Actor>(zeroActor);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const name = e.target.name;
-    const value =
-      e.target.type === "checkbox" ? e.target.checked : e.target.value;
+    const value = e.target.value;
     setNewActor({
       ...newActor,
       [name]: value,
@@ -26,6 +25,19 @@ const ActorsForm: React.FC<Props> = ({ zeroActor }) => {
 
   return (
     <form onSubmit={(e) => submit(e)}>
+      <label htmlFor="Type">
+        Tipo
+        <select
+          name="Type"
+          onChange={(e) => handleChange(e)}
+          value={newActor.Type}
+        >
+          <option value="personnel">Personal empresarial</option>
+          <option value="third">Tercero</option>
+          <option value="mine">Mina</option>
+          <option value="contractee">Cliente</option>
+        </select>
+      </label>
       <label htmlFor="Name">
         Nombre
         <input
@@ -35,22 +47,30 @@ const ActorsForm: React.FC<Props> = ({ zeroActor }) => {
           onChange={(e) => handleChange(e)}
         />
       </label>
-      <label htmlFor="Description">
-        Descripción
+      <label htmlFor="NationalId">
+        Cédula o rif
         <input
           type="text"
-          name="Description"
-          value={newActor.Description}
+          name="NationalId"
+          value={newActor.NationalId}
           onChange={(e) => handleChange(e)}
         />
       </label>
-      <label htmlFor="IsCompany">
-        Empresa
+      <label htmlFor="Address">
+        Dirección
         <input
-          type="checkbox"
-          name="IsCompany"
-          checked={newActor.IsCompany}
+          type="text"
+          name="Address"
+          value={newActor.Address}
           onChange={(e) => handleChange(e)}
+        />
+      </label>
+      <label htmlFor="Notes">
+        Notas
+        <textarea
+          name="Notes"
+          onChange={(e) => handleChange(e)}
+          value={newActor.Notes}
         />
       </label>
       <button>Crear actor</button>

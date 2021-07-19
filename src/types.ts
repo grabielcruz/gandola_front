@@ -29,9 +29,11 @@ export interface PendingTransaction {
 
 export interface Actor {
   Id: number;
+  Type: "personnel" | "third" | "mine" | "contractee";
   Name: string;
-  Description: string;
-  IsCompany: boolean;
+  NationalId: string;
+  Address: string;
+  Notes: string;
   CreatedAt: string;
 }
 

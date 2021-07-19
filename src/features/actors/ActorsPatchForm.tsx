@@ -13,10 +13,9 @@ const ActorsPatchForm: React.FC<Props> = ({
   const dispatch = useDispatch();
 
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const name = e.target.name;
-    const value =
-      e.target.type === "checkbox" ? e.target.checked : e.target.value;
+    const value = e.target.value;
     setEditingActor({
       ...editingActor,
       [name]: value,
@@ -49,6 +48,19 @@ const ActorsPatchForm: React.FC<Props> = ({
 
   return (
     <form onSubmit={(e) => submit(e)}>
+      <label htmlFor="Type">
+        Tipo
+        <select
+          name="Type"
+          onChange={(e) => handleChange(e)}
+          value={editingActor.Type}
+        >
+          <option value="personnel">Personal empresarial</option>
+          <option value="third">Tercero</option>
+          <option value="mine">Mina</option>
+          <option value="contractee">Cliente</option>
+        </select>
+      </label>
       <label htmlFor="Name">
         Nombre
         <input
@@ -58,22 +70,30 @@ const ActorsPatchForm: React.FC<Props> = ({
           onChange={(e) => handleChange(e)}
         />
       </label>
-      <label htmlFor="Description">
-        Descripción
+      <label htmlFor="NationalId">
+        Cédula o rif
         <input
           type="text"
-          name="Description"
-          value={editingActor.Description}
+          name="NationalId"
+          value={editingActor.NationalId}
           onChange={(e) => handleChange(e)}
         />
       </label>
-      <label htmlFor="IsCompany">
-        Empresa
+      <label htmlFor="Address">
+        Dirección
         <input
-          type="checkbox"
-          name="IsCompany"
-          checked={editingActor.IsCompany}
+          type="text"
+          name="Address"
+          value={editingActor.Address}
           onChange={(e) => handleChange(e)}
+        />
+      </label>
+      <label htmlFor="Notes">
+        Notas
+        <textarea
+          name="Notes"
+          onChange={(e) => handleChange(e)}
+          value={editingActor.Notes}
         />
       </label>
       <button>Guardar Cambios</button>

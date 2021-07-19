@@ -10,9 +10,11 @@ const Actors = () => {
   const dispatch = useDispatch();
   const zeroActor: Actor = {
     Id: 0,
+    Type: "third",
     Name: "",
-    Description: "",
-    IsCompany: false,
+    NationalId: "",
+    Address: "",
+    Notes: "",
     CreatedAt: "",
   };
   const [editingActor, setEditingActor] = useState<Actor>(zeroActor);
@@ -40,9 +42,11 @@ const Actors = () => {
         <thead>
           <tr>
             <th>#</th>
+            <th>Tipo</th>
             <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Empresa</th>
+            <th>Cédula o rif</th>
+            <th>Dirección</th>
+            <th>Notas</th>
           </tr>
         </thead>
         <tbody>
@@ -50,9 +54,11 @@ const Actors = () => {
             actors.map((actor, i) => (
               <tr key={i}>
                 <td>{actor.Id}</td>
+                <td>{actor.Type}</td>
                 <td>{actor.Name}</td>
-                <td>{actor.Description}</td>
-                <td>{actor.IsCompany ? "Sí" : "No"}</td>
+                <td>{actor.NationalId}</td>
+                <td>{actor.Address}</td>
+                <td>{actor.Notes}</td>
                 <td>
                   <button type="button" onClick={() => setEditingActor(actor)}>
                     Editar
