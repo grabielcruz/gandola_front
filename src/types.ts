@@ -45,3 +45,18 @@ export interface Note {
   CreatedAt: string;
   AttendedAt: string;
 }
+
+export interface Bill {
+  Id: number;
+  Url: string;
+  Date: string;
+  Company: {
+    Id: number;
+    Name: string;
+    NationalId: string;
+  };
+  Charged: boolean;
+  CreatedAt: string;
+}
+
+export type Status = "idle" | "succeeded" | "failed" | "loading"

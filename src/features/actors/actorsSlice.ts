@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { Actor } from "../../types";
+import { Actor, Status } from "../../types";
 
 const initialState: InitialActorsState = {
   Actors: [],
@@ -157,7 +157,7 @@ const actorsSlice = createSlice({
 
 interface InitialActorsState {
   Actors: Actor[];
-  Status: "idle" | "succeeded" | "failed" | "loading";
+  Status: Status;
   Error: string | null;
 }
 

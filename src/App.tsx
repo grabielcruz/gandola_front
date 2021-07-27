@@ -5,6 +5,7 @@ import Actors from "./features/actors/Actors";
 import Home from "./features/Home";
 import { Switch, BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Notes from "./features/notes/Notes";
+import Bills from "./features/bills/Bills";
 
 const Container = styled.div`
   width: 80%;
@@ -29,6 +30,9 @@ const App = () => (
       <li>
         <Link to="/notes">Notas</Link>
       </li>
+      <li>
+        <Link to="/bills">Facturas</Link>
+      </li>
     </ul>
     <Container>
       <Switch>
@@ -43,6 +47,9 @@ const App = () => (
         </Route>
         <Route path="/notes">
           <Notes />
+        </Route>
+        <Route path="/bills">
+          <Bills />
         </Route>
         <Route path="/">
           <Home />

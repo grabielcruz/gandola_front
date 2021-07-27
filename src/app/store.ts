@@ -4,6 +4,7 @@ import transactionsReducer from "../features/transactions/transactionsSlice";
 import pendingTransactionReducer from "../features/pendingTransactions/pendingTransactionsSlice";
 import actorsReducer from "../features/actors/actorsSlice";
 import notesReducer from "../features/notes/notesSlice";
+import billsReducer from "../features/bills/billsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     PendingTransactions: pendingTransactionReducer,
     Actors: actorsReducer,
     Notes: notesReducer,
+    Bills: billsReducer,
   },
 });
 
