@@ -48,6 +48,7 @@ export interface Note {
 
 export interface Bill {
   Id: number;
+  Code: string;
   Url: string;
   Date: string;
   Company: {

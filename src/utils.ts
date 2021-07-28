@@ -21,7 +21,7 @@ export function FormatVESCurrency(amount: number): string {
     style: "currency",
     currency: "VES",
   });
-  return formatter.format(amount).replace("VES", "Bs")
+  return formatter.format(amount).replace("VES", "Bs");
 }
 
 export function DateFormatter(datetime: string): string {
@@ -35,4 +35,12 @@ export function DateFormatter(datetime: string): string {
   const formattedDate = `${date}/${month}/${year}`;
   return formattedDate;
   // return newDatetime.toLocaleString()
+}
+
+export function GetToday(): string {
+  const date = new Date();
+  const [m, d, y] = date.toLocaleDateString().split("/");
+  const m0 = m.length === 1 ? "0" + m : m;
+  const today = `${y}-${m0}-${d}`;
+  return today;
 }

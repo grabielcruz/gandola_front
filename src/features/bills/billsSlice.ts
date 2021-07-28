@@ -50,7 +50,7 @@ export const createBill = createAsyncThunk<any, CreateBillProps, {}>(
   async ({ Bill, Image, Present }, { rejectWithValue }) => {
     try {
       if (Present) {
-        const response1 = await axios.post(`upload/00022`, Image, {
+        const response1 = await axios.post(`upload/${Bill.Code}`, Image, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
