@@ -103,7 +103,7 @@ const BillsForm: React.FC<Props> = ({ zeroBill, companies }) => {
             <input type="file" name="image" ref={fileInput} />
           </label>
           <label htmlFor="Code">
-            Código
+            Código:
             <input
               type="text"
               name="Code"
@@ -121,7 +121,7 @@ const BillsForm: React.FC<Props> = ({ zeroBill, companies }) => {
             />
           </label>
           <label htmlFor="Company">
-            Compañía
+            Compañía:
             <select
               name="Company"
               onChange={(e) => handleChange(e)}

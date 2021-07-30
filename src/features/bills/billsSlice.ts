@@ -6,9 +6,6 @@ const initialState: InitialBillsState = {
   Bills: [],
   Status: "idle",
   Error: null,
-  // ImageStatus: "idle",
-  // ImageError: null,
-  // LastImageUrl: "",
 };
 
 export const fetchBills = createAsyncThunk(
@@ -26,26 +23,7 @@ export const fetchBills = createAsyncThunk(
   }
 );
 
-// export const createImage = createAsyncThunk<any, FormData, {}>(
-//   "/bills/createImage",
-//   async (newImage, { rejectWithValue }) => {
-//     try {
-//       const response = await axios.post(`upload/00022`, newImage, {
-//         headers: {
-//           "Content-Type": "multipart/form-data",
-//         },
-//       });
-//       return response.data;
-//     } catch (error) {
-//       if (!error.response) {
-//         throw error;
-//       }
-//       return rejectWithValue(error.response.data);
-//     }
-//   }
-// );
-
-export const createBill = createAsyncThunk<any, CreateBillProps, {}>(
+export const createBill = createAsyncThunk<any, BillProps, {}>(
   "/bills/createBill",
   async ({ Bill, Image, Present }, { rejectWithValue }) => {
     try {
@@ -68,17 +46,33 @@ export const createBill = createAsyncThunk<any, CreateBillProps, {}>(
   }
 );
 
+export const patchBill = createAsyncThunk<any, BillProps, {}>(
+  "/bills/patchBill",
+  async ({ Bill, Image, Present }, { rejectWithValue }) => {
+    try {
+      if (Present) {
+        const response1 = await axios.post(`upload/${Bill.Code}`, Image, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        Bill.Url = response1.data;
+      }
+      const response2 = await axios.patch(`/bills/${Bill.Id}`, Bill);
+      return response2.data;
+    } catch (error) {
+      if (!error.response) {
+        throw error;
+      }
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const billsSlice = createSlice({
   name: "bills",
   initialState,
-  reducers: {
-    // setBillsImageStatus: (state, action) => {
-    //   state.ImageStatus = action.payload;
-    // },
-    // setBillsImageError: (state, action) => {
-    //   state.ImageError = action.payload;
-    // },
-  },
+  reducers: {},
   extraReducers: {
     [fetchBills.pending.toString()]: (state, action) => {
       state.Status = "loading";
@@ -105,18 +99,24 @@ const billsSlice = createSlice({
       state.Error = action.payload;
     },
 
-    // [createImage.pending.toString()]: (state, action) => {
-    //   state.ImageStatus = "loading";
-    // },
-    // [createImage.fulfilled.toString()]: (state, action) => {
-    //   state.ImageStatus = "succeeded";
-    //   state.LastImageUrl = action.payload;
-    //   state.ImageError = null;
-    // },
-    // [createImage.rejected.toString()]: (state, action) => {
-    //   state.ImageStatus = "failed";
-    //   state.ImageError = action.payload;
-    // },
+    [patchBill.pending.toString()]: (state, action) => {
+      state.Status = "loading";
+    },
+    [patchBill.fulfilled.toString()]: (state, action) => {
+      state.Status = "succeeded";
+      for (let i = 0; i < state.Bills.length; i++) {
+        if (state.Bills[i].Id === action.payload.Id) {
+          state.Bills[i] = action.payload;
+          state.Error = null;
+          return;
+        }
+      }
+      state.Error = "It did not match";
+    },
+    [patchBill.rejected.toString()]: (state, action) => {
+      state.Status = "failed";
+      state.Error = action.payload;
+    },
   },
 });
 
@@ -124,17 +124,12 @@ interface InitialBillsState {
   Bills: Bill[];
   Status: Status;
   Error: string | null;
-  // ImageStatus: Status;
-  // ImageError: string | null;
-  // LastImageUrl: string;
 }
 
-interface CreateBillProps {
+interface BillProps {
   Bill: Bill;
   Image: FormData;
   Present: Boolean;
 }
-
-// export const { setBillsImageStatus, setBillsImageError } = billsSlice.actions;
 
 export default billsSlice.reducer;
