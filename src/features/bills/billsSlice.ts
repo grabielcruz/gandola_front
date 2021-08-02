@@ -69,6 +69,21 @@ export const patchBill = createAsyncThunk<any, BillProps, {}>(
   }
 );
 
+export const deleteBill = createAsyncThunk<any, number, {}>(
+  "/bills/deleteBill",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(`/bills/${id}`);
+      return response.data;
+    } catch (error) {
+      if (!error.response) {
+        throw error;
+      }
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const billsSlice = createSlice({
   name: "bills",
   initialState,
@@ -117,6 +132,27 @@ const billsSlice = createSlice({
       state.Status = "failed";
       state.Error = action.payload;
     },
+    
+    [deleteBill.pending.toString()]: (state, action) => {
+      state.Status = "loading";
+    },
+    [deleteBill.fulfilled.toString()]: (state, action) => {
+      state.Status = "succeeded";
+      for (let i = 0; i < state.Bills.length; i++) {
+        if (state.Bills[i].Id === action.payload.Id) {
+          state.Bills = state.Bills.slice(0, i).concat(
+            state.Bills.slice(i + 1)
+          );
+          state.Error = null;
+          return;
+        }
+      }
+      state.Error = "Dit not delete";
+    },
+    [deleteBill.rejected.toString()]: (state, action) => {
+      state.Status = "failed";
+      state.Error = action.payload;
+    }
   },
 });
 

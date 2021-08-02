@@ -5,7 +5,7 @@ import { Bill } from "../../types";
 import { fetchCompanies } from "../actors/actorsSlice";
 import BillsForm from "./BillsForm";
 import BillsPatchForm from "./BillsPatchForm";
-import { fetchBills } from "./billsSlice";
+import { deleteBill, fetchBills } from "./billsSlice";
 
 const Bills = () => {
   const dispatch = useDispatch();
@@ -78,6 +78,12 @@ const Bills = () => {
             </p>
             <button type="button" onClick={() => setEditingBill(bill)}>
               Editar
+            </button>
+            <button
+              type="button"
+              onClick={(e) => dispatch(deleteBill(bill.Id))}
+            >
+              Borrar
             </button>
           </div>
         ))}

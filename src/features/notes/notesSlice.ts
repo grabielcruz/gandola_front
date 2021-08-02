@@ -164,6 +164,10 @@ const notesSlice = createSlice({
       }
       state.Error = "Dit not delete";
     },
+    [deleteNote.rejected.toString()]: (state, action) => {
+      state.Status = "failed";
+      state.Error = action.payload;
+    },
 
     [unattendNote.pending.toString()]: (state, action) => {
       state.Status = "loading";
