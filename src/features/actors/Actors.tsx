@@ -29,7 +29,7 @@ const Actors = () => {
   return (
     <div>
       {error && error}
-      {status === "loading" && "loading"}
+      {status === "loading" && "loading..."}
       <ActorsForm zeroActor={zeroActor} />
       {editingActor.Id !== 0 && (
         <ActorsPatchForm

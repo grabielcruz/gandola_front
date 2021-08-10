@@ -5,6 +5,7 @@ import pendingTransactionReducer from "../features/pendingTransactions/pendingTr
 import actorsReducer from "../features/actors/actorsSlice";
 import notesReducer from "../features/notes/notesSlice";
 import billsReducer from "../features/bills/billsSlice";
+import trucksReducer from "../features/trucks/trucksSlice";
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     Actors: actorsReducer,
     Notes: notesReducer,
     Bills: billsReducer,
+    Trucks: trucksReducer,
   },
 });
 

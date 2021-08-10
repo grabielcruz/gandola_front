@@ -193,7 +193,7 @@ const actorsSlice = createSlice({
     },
     [deleteActor.rejected.toString()]: (state, action) => {
       state.Status = "failed";
-      state.CompaniesError = action.payload;
+      state.Error = action.payload;
     },
 
     [fetchCompanies.pending.toString()]: (state, action) => {

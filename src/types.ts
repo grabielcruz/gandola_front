@@ -60,4 +60,12 @@ export interface Bill {
   CreatedAt: string;
 }
 
-export type Status = "idle" | "succeeded" | "failed" | "loading"
+export interface Truck {
+  Id: number;
+  Name: string;
+  Data: string;
+  Photos: string[];
+  Created_At: string;
+}
+
+export type Status = "idle" | "succeeded" | "failed" | "loading";

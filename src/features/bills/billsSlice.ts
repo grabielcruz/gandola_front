@@ -28,7 +28,7 @@ export const createBill = createAsyncThunk<any, BillProps, {}>(
   async ({ Bill, Image, Present }, { rejectWithValue }) => {
     try {
       if (Present) {
-        const response1 = await axios.post(`upload/${Bill.Code}`, Image, {
+        const response1 = await axios.post(`uploadbill/${Bill.Code}`, Image, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -51,7 +51,7 @@ export const patchBill = createAsyncThunk<any, BillProps, {}>(
   async ({ Bill, Image, Present }, { rejectWithValue }) => {
     try {
       if (Present) {
-        const response1 = await axios.post(`upload/${Bill.Code}`, Image, {
+        const response1 = await axios.post(`uploadbill/${Bill.Code}`, Image, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
