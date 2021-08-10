@@ -1,24 +1,33 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../app/store";
+import TrucksForm from "./TrucksForm";
 import { fetchTrucks } from "./trucksSlice";
 
-
 const Trucks = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const trucks = useSelector((state: RootState) => state.Trucks.Trucks);
   const status = useSelector((state: RootState) => state.Trucks.Status);
   const error = useSelector((state: RootState) => state.Trucks.Error);
 
+  const zeroTruck = {
+    Id: 0,
+    Name: "",
+    Data: "",
+    Photos: [],
+    Created_At: "",
+  };
+
   useEffect(() => {
-    if (status === "idle") dispatch(fetchTrucks())
-  }, [status, dispatch])
+    if (status === "idle") dispatch(fetchTrucks());
+  }, [status, dispatch]);
 
   return (
     <div>
       {error && error}
       {status === "loading" && "loading..."}
+      <TrucksForm zeroTruck={zeroTruck} />
       {trucks.length > 0 && (
         <div>
           <h1>Trucks</h1>
