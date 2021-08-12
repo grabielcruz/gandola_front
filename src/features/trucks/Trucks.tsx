@@ -1,16 +1,14 @@
+import { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../app/store";
+import { Truck } from "../../types";
 import TrucksForm from "./TrucksForm";
-import { fetchTrucks } from "./trucksSlice";
+import TrucksPatchForm from "./TrucksPatchForm";
+import { deleteTruck, fetchTrucks } from "./trucksSlice";
 
 const Trucks = () => {
   const dispatch = useDispatch();
-
-  const trucks = useSelector((state: RootState) => state.Trucks.Trucks);
-  const status = useSelector((state: RootState) => state.Trucks.Status);
-  const error = useSelector((state: RootState) => state.Trucks.Error);
-
   const zeroTruck = {
     Id: 0,
     Name: "",
@@ -18,6 +16,12 @@ const Trucks = () => {
     Photos: [],
     Created_At: "",
   };
+
+  const [editingTruck, setEditingTruck] = useState<Truck>(zeroTruck);
+
+  const trucks = useSelector((state: RootState) => state.Trucks.Trucks);
+  const status = useSelector((state: RootState) => state.Trucks.Status);
+  const error = useSelector((state: RootState) => state.Trucks.Error);
 
   useEffect(() => {
     if (status === "idle") dispatch(fetchTrucks());
@@ -28,6 +32,13 @@ const Trucks = () => {
       {error && error}
       {status === "loading" && "loading..."}
       <TrucksForm zeroTruck={zeroTruck} />
+      {editingTruck.Id > 0 && (
+        <TrucksPatchForm
+          zeroTruck={zeroTruck}
+          editingTruck={editingTruck}
+          setEditingTruck={setEditingTruck}
+        />
+      )}
       {trucks.length > 0 && (
         <div>
           <h1>Trucks</h1>
@@ -41,6 +52,13 @@ const Trucks = () => {
               {truck.Photos.map((photo, i) => (
                 <img key={i} src={photo} alt={photo} />
               ))}
+              <button type="button" onClick={() => setEditingTruck(truck)}>
+                Editar
+              </button>
+              <button
+                type="button"
+                onClick={() => dispatch(deleteTruck(truck.Id))}
+              >Borrar</button>
             </div>
           ))}
         </div>

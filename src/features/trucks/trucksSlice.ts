@@ -28,20 +28,53 @@ export const createTruck = createAsyncThunk<any, TruckProps, {}>(
   async ({ Truck, Image, Present }, { rejectWithValue }) => {
     try {
       if (Present) {
-        const response1 = await axios.post(
-          `uploadTrucks/11`,
-          Image,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-        console.log(response1.data)
+        const response1 = await axios.post(`uploadTrucks`, Image, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
         Truck.Photos = response1.data;
       }
       const response2 = await axios.post("/trucks", Truck);
       return response2.data;
+    } catch (error) {
+      if (!error.response) {
+        throw error;
+      }
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const patchTruck = createAsyncThunk<any, TruckProps, {}>(
+  "/trucks/patchTruck",
+  async ({ Truck, Image, Present }, { rejectWithValue }) => {
+    try {
+      if (Present) {
+        const response1 = await axios.post(`uploadTrucks`, Image, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        Truck.Photos = response1.data;
+      }
+      const response2 = await axios.patch(`/trucks/${Truck.Id}`, Truck);
+      return response2.data;
+    } catch (error) {
+      if (!error.response) {
+        throw error;
+      }
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const deleteTruck = createAsyncThunk<any, number, {}>(
+  "/trucks/deleteTruck",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(`trucks/${id}`);
+      return response.data;
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -81,6 +114,45 @@ const trucksSlice = createSlice({
       state.Status = "failed";
       state.Error = action.payload;
     },
+
+    [patchTruck.pending.toString()]: (state, action) => {
+      state.Status = "loading";
+    },
+    [patchTruck.fulfilled.toString()]: (state, action) => {
+      state.Status = "succeeded";
+      for (let i = 0; i < state.Trucks.length; i++) {
+        if (state.Trucks[i].Id === action.payload.Id) {
+          state.Trucks[i] = action.payload;
+          state.Error = null;
+          return;
+        }
+      }
+      state.Error = "It did not match";
+    },
+    [patchTruck.rejected.toString()]: (state, action) => {
+      state.Status = "failed";
+      state.Error = action.payload;
+    },
+
+    [deleteTruck.pending.toString()]: (state, action) => {
+      state.Status = "loading";
+    },
+    [deleteTruck.fulfilled.toString()]: (state, action) => {
+      state.Status = "succeeded";
+      for (let i = 0; i < state.Trucks.length; i++) {
+        if (state.Trucks[i].Id === action.payload.Id) {
+          state.Trucks = state.Trucks.slice(0, i).concat(
+            state.Trucks.slice(i + 1)
+          );
+          state.Error = null;
+          return;
+        }
+      }
+    },
+    [deleteTruck.rejected.toString()]: (state, action) => {
+      state.Status = "failed";
+      state.Error = action.payload;
+    }
   },
 });
 
